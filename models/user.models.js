@@ -1,9 +1,10 @@
-import { Schema } from "mongoose";
+const { createHmac, randomBytes, Hmac } = require("crypto");
+const {Schema, model} = require("mongoose")
 
-const userschema = new Schema({
+const userSchema = new Schema({
     fullname: {
         type: String,
-        required : true
+        required : true,
     }, 
     email: {
         type: String,
@@ -12,7 +13,6 @@ const userschema = new Schema({
     },
     salt : {
         type: String,
-        required : true,
     },
     password : {
         type: String,
@@ -21,6 +21,43 @@ const userschema = new Schema({
     profileImage: {
         type: String,
         default: "/images/download.png"
+    },
+    role: {
+        type: String,
+        enum : ["USER", "ADMIN"],
+        default : "USER",
     }
 
-}, {timestamps: true})
+}, 
+{timestamps: true}
+)
+userSchema.pre('save', function (next) {
+    const user = this;
+    if (!user.isModified('password')) return next();
+
+    const salt = randomBytes(16).toString('hex');
+    const hashedPassword = createHmac('sha256', salt)
+        .update(user.password)
+        .digest('hex');
+
+    user.salt = salt;
+    user.password = hashedPassword;
+
+    next();
+});
+
+userSchema.static("matchPassword", async function(email, password){
+    const user =  await this.findOne({email})
+    if(!user) throw new Error("User not Found!!");
+
+    const salt = user.salt;
+    const hashedPassword = user.password
+
+    const userProvidedHash = createHmac('sha256', salt)
+    .update(password)
+    .digest('hex');
+    if(hashedPassword !== userProvidedHash) throw new Error("Incorrrect Password")
+    return user
+})
+const User = model ('user', userSchema)
+module.exports = User;
