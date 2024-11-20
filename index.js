@@ -2,6 +2,7 @@ const path = require("path")
 const express = require("express")
 const mongoose = require("mongoose")
 const userRouter = require("./routes/user.js")
+const blogRouter = require("./routes/blog.js")
 const cookieParser = require("cookie-parser")
 const { checkForAuthenticationCookie } = require("./middlewares/authentication.js")
 const app = express();
@@ -24,4 +25,5 @@ app.get("/", (req, res) => {
 })
 
 app.use("/user", userRouter)
+app.use("/blog", blogRouter)
 app.listen(PORT, ()=> console.log(`Server Statrted SuccessFully !! ${PORT}`))
