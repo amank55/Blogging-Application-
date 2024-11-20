@@ -6,20 +6,22 @@ function createTokenForUser(user){
     const payload = {
       _id: user._id,
       email:user.email,
-      profileImageUrl:user.profileImageUrl,
+      profileImageURL:user.profileImageURL,
       role: user.role,
     };
-    const token = JWT.sign(payload,secret)
+    const token =  JWT.sign(payload,secret)
     return token
 }
 
-function ValidateToken(token){
-        const payload = JWT.verify(token, secret);
-        return payload;
+try {
+    function validateToken(token){
+            const payload = JWT.verify(token, secret);
+            return payload;
+    }  
+} catch (error) {
+    throw new Error('Invalid or expired token');
 }
-
-
 module.exports = {
     createTokenForUser,
-    ValidateToken
+    validateToken,
 }
