@@ -5,23 +5,44 @@
     <title>Homepage</title>
 </head>
 <body>
-    <%- include ('./nav') %>
-    <div class="container mt-3">
-        <div class="row row-cols-4">
-          <% blogs.forEach(blog => { %>
-          <div class="col">
-            <div class="card col" style="width: 18rem">
-              <img src="<%= blog.coverImageURL %>" class="card-img-top" />
-              <div class="card-body">
-                <h5 class="card-title"><%= blog.title %></h5>
-                <a href="/blog/<%= blog._id %>" class="btn btn-primary">View</a>
-              </div>
-            </div>
+  <div class="container mt-3">
+    <div class="row row-cols-3 gy-5">
+      <% blogs.forEach(blog => { %>
+      <div class="col">
+        <div class="card col" style="width: 18rem">
+          <img src="<%= blog.coverImageURL %>" class="card-img-top" />
+          <div class="card-body">
+            <h5 class="card-title"><%= blog.title %></h5>
+            <a href="/blog/<%= blog._id %>" class="btn btn-primary me-5">View</a>
+            <!-- Delete Button -->
+            <button class="btn btn-danger" onclick="deleteBlog('<%= blog._id %>')">Delete</button>
           </div>
-          <% }) %>
         </div>
       </div>
+      <% }) %>
+    </div>
+  </div>
   
-    <%- include ('./script') %>
-</body>
-</html>
+  <%- include ('./script') %>
+  <script>
+    async function deleteBlog(blogId) {
+      if (confirm("Are you sure you want to delete this blog?")) {
+        try {
+          const response = await fetch(`/blog/${blogId}`, {
+            method: "DELETE",
+          });
+          if (response.ok) {
+            alert("Blog deleted successfully");
+            location.reload(); // Refresh the page to update the list
+          } else {
+            alert("Failed to delete the blog");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred");
+        }
+      }
+    }
+  </script>
+  </body>
+  </html>
