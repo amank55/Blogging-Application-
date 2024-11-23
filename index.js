@@ -6,7 +6,6 @@ const router1 = require("./routes/blog.js")
 const cookieParser = require("cookie-parser")
 
 const Blog = require("./models/blog.js")
-
 const { checkForAuthenticationCookie } = require("./middlewares/authentication.js")
 const app = express();
 const PORT = 8000

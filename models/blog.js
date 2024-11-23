@@ -16,7 +16,10 @@ const blogSchema = new Schema ({
     createdBy : {
         type: Schema.Types.ObjectId,
         ref: "user"
-    }
+    },
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }], 
+  
+   
 }, {timestamps: true})
 
 const Blog = model('blog', blogSchema)

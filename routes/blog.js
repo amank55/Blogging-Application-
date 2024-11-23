@@ -4,6 +4,7 @@ const router1 = express.Router();
 const path = require("path")
 const Blog = require("../models/blog.js")
 
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null,path.resolve(`./public/upload`))
@@ -23,8 +24,7 @@ router1.get("/add-new", (req, res) => {
 });
 
 router1.get("/:id", async (req, res) => {
-      const blog = await Blog.findById(req.params.id).populate("createdBy")
-      console.log("blog", blog)
+      const blog = await Blog.findById(req.params.id).populate("createdBy") 
       return res.render('blog',{
         user: req.user,
         blog,
@@ -42,6 +42,8 @@ router1.delete("/:id", async (req, res) => {
     return res.status(500).send("An error occurred while deleting the blog");
   }
 });
+
+
 
 router1.post("/",upload.single('coverImage') ,async (req, res) => {
     const {title, body} = req.body
